@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { GameBoard } from './GameBoard';
 import { GameControls } from './GameControls';
 import { ScoreDisplay } from './ScoreDisplay';
-import { SwipeControls } from './SwipeControls';
+// import { SwipeControls } from './SwipeControls';
 import { GameSettings } from './GameSettings';
 import { GameState, Direction } from '../types';
 import { 
@@ -145,50 +145,48 @@ export const SnakeGame: React.FC = () => {
   }, []);
 
   return (
-    <SwipeControls onDirectionChange={handleDirectionChange} gameOver={gameState.gameOver}>
-      <View style={styles.container}>
-        <StatusBar style="light" />
-        
-        <View style={styles.headerRow}>
-          <TouchableOpacity 
-            style={styles.settingsButton} 
-            onPress={() => setShowSettings(true)}
-          >
-            <Text style={styles.settingsButtonText}>⚙️</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <ScoreDisplay 
-          score={gameState.score}
-          highScore={gameState.highScore}
-          gameOver={gameState.gameOver}
-        />
-        
-        <View style={styles.gameContainer}>
-          <GameBoard 
-            snake={gameState.snake}
-            food={gameState.food}
-          />
-        </View>
-        
-        <GameControls
-          onDirectionChange={handleDirectionChange}
-          onPause={handlePause}
-          onReset={handleReset}
-          isPaused={gameState.isPaused}
-          gameOver={gameState.gameOver}
-        />
-
-        <GameSettings
-          visible={showSettings}
-          onClose={() => setShowSettings(false)}
-          onSpeedChange={handleSpeedChange}
-          onBoardSizeChange={handleBoardSizeChange}
-          currentSpeed={gameSpeed}
-          currentBoardSize={boardSize}
+    <View style={styles.container}>
+      <StatusBar style="light" />
+      
+      <View style={styles.headerRow}>
+        <TouchableOpacity 
+          style={styles.settingsButton} 
+          onPress={() => setShowSettings(true)}
+        >
+          <Text style={styles.settingsButtonText}>⚙️</Text>
+        </TouchableOpacity>
+      </View>
+      
+      <ScoreDisplay 
+        score={gameState.score}
+        highScore={gameState.highScore}
+        gameOver={gameState.gameOver}
+      />
+      
+      <View style={styles.gameContainer}>
+        <GameBoard 
+          snake={gameState.snake}
+          food={gameState.food}
         />
       </View>
-    </SwipeControls>
+      
+      <GameControls
+        onDirectionChange={handleDirectionChange}
+        onPause={handlePause}
+        onReset={handleReset}
+        isPaused={gameState.isPaused}
+        gameOver={gameState.gameOver}
+      />
+
+      <GameSettings
+        visible={showSettings}
+        onClose={() => setShowSettings(false)}
+        onSpeedChange={handleSpeedChange}
+        onBoardSizeChange={handleBoardSizeChange}
+        currentSpeed={gameSpeed}
+        currentBoardSize={boardSize}
+      />
+    </View>
   );
 };
 

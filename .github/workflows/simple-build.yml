@@ -31,27 +31,31 @@ jobs:
     - name: 🔧 Setup Android SDK
       uses: android-actions/setup-android@v3
       with:
-        api-level: 33
-        build-tools: 33.0.0
+        api-level: 34
+        build-tools: 34.0.0
+        ndk-version: 25.1.8937393
     
     - name: 📦 Install NPM Dependencies
-      run: npm install
+      run: |
+        npm ci
+        npx expo install --fix
     
     - name: 🔨 Prebuild Android Project
       run: |
-        npx expo install --fix
-        npx expo prebuild --platform android --clear
+        npx expo prebuild --platform android --clear --no-install
     
     - name: 📝 Make Gradlew Executable
       run: chmod +x ./android/gradlew
     
     - name: 🏭 Build Debug APK
       working-directory: ./android
-      run: ./gradlew assembleDebug --stacktrace
+      run: |
+        ./gradlew clean
+        ./gradlew assembleDebug --no-daemon --stacktrace
     
     - name: 🏭 Build Release APK (Unsigned)
       working-directory: ./android
-      run: ./gradlew assembleRelease --stacktrace
+      run: ./gradlew assembleRelease --no-daemon --stacktrace
     
     - name: 📤 Upload Debug APK Artifact
       uses: actions/upload-artifact@v4

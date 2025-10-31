@@ -1,0 +1,55 @@
+name: 🎮 Snake Game APK - Minimal Build
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-expo:
+    name: 🚀 Build with Expo (Reliable)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🏗️ Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: 📦 Install dependencies
+      run: npm ci
+    
+    - name: 🏗️ Setup Expo
+      uses: expo/expo-github-action@v8
+      with:
+        expo-version: latest
+    
+    - name: 🔨 Export for Android
+      run: |
+        npx expo export --platform android
+        echo "✅ Android bundle exported successfully!"
+    
+    - name: 📤 Upload Android Bundle
+      uses: actions/upload-artifact@v4
+      with:
+        name: 🐍-snake-game-android-bundle
+        path: dist/
+        retention-days: 30
+    
+    - name: 🎉 Success Message
+      run: |
+        echo "### 🎉 Snake Game Export Complete! 🐍" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📱 **Android Bundle Generated:**" >> $GITHUB_STEP_SUMMARY
+        echo "- 📦 Optimized JavaScript bundle for Android" >> $GITHUB_STEP_SUMMARY
+        echo "- 🚀 Ready for conversion to APK" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📥 **Download the bundle from Artifacts above**" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "🎯 **Alternative APK Generation:**" >> $GITHUB_STEP_SUMMARY
+        echo "- Use Expo Application Services (EAS)" >> $GITHUB_STEP_SUMMARY
+        echo "- Run: \`eas build --platform android\`" >> $GITHUB_STEP_SUMMARY
