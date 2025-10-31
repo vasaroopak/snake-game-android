@@ -1,0 +1,79 @@
+name: 🐍 Build Snake Game APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  build-android:
+    name: 🤖 Build Android APK
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🏗️ Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: ☕ Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: 🔧 Setup Android SDK
+      uses: android-actions/setup-android@v3
+    
+    - name: 📦 Install dependencies
+      run: npm ci
+    
+    - name: 🏗️ Setup Expo and EAS
+      uses: expo/expo-github-action@v8
+      with:
+        expo-version: latest
+        eas-version: latest
+        token: ${{ secrets.EXPO_TOKEN }}
+    
+    - name: 🔨 Generate native code
+      run: npx expo prebuild --platform android --clear
+    
+    - name: 🏭 Build Debug APK
+      run: |
+        cd android
+        chmod +x ./gradlew
+        ./gradlew assembleDebug --no-daemon
+    
+    - name: 🏭 Build Release APK
+      run: |
+        cd android
+        ./gradlew assembleRelease --no-daemon
+    
+    - name: 📤 Upload Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: snake-game-debug
+        path: android/app/build/outputs/apk/debug/app-debug.apk
+        retention-days: 30
+    
+    - name: 📤 Upload Release APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: snake-game-release
+        path: android/app/build/outputs/apk/release/app-release.apk
+        retention-days: 30
+    
+    - name: 📊 APK Info
+      run: |
+        echo "🎉 APK Build Complete!"
+        echo "📱 Debug APK: $(ls -lh android/app/build/outputs/apk/debug/app-debug.apk)"
+        echo "🚀 Release APK: $(ls -lh android/app/build/outputs/apk/release/app-release.apk)"
+        echo ""
+        echo "📥 Download your APKs from the 'Actions' tab above!"
+        echo "🔗 Direct link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
