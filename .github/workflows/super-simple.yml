@@ -1,0 +1,40 @@
+name: 🐍 Snake Game - Simple Export
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  export:
+    name: 📦 Export Game Bundle
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🏗️ Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: 📦 Install dependencies
+      run: |
+        npm install --legacy-peer-deps --no-package-lock
+    
+    - name: 🔨 Export Android bundle
+      run: |
+        npx expo export --platform android --output-dir ./build
+    
+    - name: 📤 Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: snake-game-export
+        path: ./build
+        retention-days: 7
+    
+    - name: ✅ Success
+      run: |
+        echo "🎉 Snake Game exported successfully!"
+        echo "📥 Download the artifacts above to get your game files"
